@@ -1,3 +1,7 @@
+## AstroFi
+AstroFi is an innovative approach to a web application designed to enhance a user’s emotional well-being by integrating personalized music recommendations with daily horoscope insights. AstroFi aims to provide a therapeutic emotional support system for all targeted users by combining these two APIs. AstroFi targets individuals who seek emotional guidance in their daily lives through either music or astrology. The
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
