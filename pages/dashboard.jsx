@@ -16,7 +16,14 @@ import RecsGenreSchema from "@/db/models/recsAndGenres";
 import fetchHoroscope from '../utils/fetchHoroscope'
 import fetchSpotify from '../utils/fetchSpotify'
 import fetchGenres from '../utils/fetchGenres'
+import fetchArtists from "@/utils/fetchArtists";
+import fetchToken from "@/utils/fetchToken";
+import { fetchDailyHoroscope, fetchSignData } from "@/utils/fetchBackUpHoro";
+import HistoryEntry from "@/db/models/historyEntry"
+import { extractWords, mapWords } from "@/utils/mapHoroscope";
 import { randomGenres } from '../pages/api/genre'
+import SpotifyWebPlayer from "react-spotify-web-playback";
+import { useEffect, useState } from "react";
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
@@ -34,51 +41,197 @@ export const getServerSideProps = withIronSessionSsr(
           console.error(`User not found for username: ${user.username}`)
         }
         const zodiac = dbUser.zodiac
+        console.log("Zodiac", zodiac)
 
-        const horoscopeData = await fetchHoroscope(zodiac)
+        const horoscopeData = await fetchDailyHoroscope(zodiac)
+        const predictionData = await fetchHoroscope(zodiac)
+        const signData = await fetchSignData(zodiac)
         //console.log("Horoscope Data", horoscopeData)
-        props.horoscope = horoscopeData || { prediction: 'No horoscope' }
+        props.horoscope = {
+          zodiac,
+          prediction: predictionData.prediction || 'No prediction',
+          color: predictionData.color || '',
+          remedy: predictionData.remedy || '',
+          number: predictionData.number || '',
+          compatibility: signData.compatibility || '',
+          date: signData.date_range || '',
+          element: signData.element || ''
+
+        }
         //console.log("Horoscope Props", props.horoscope)
 
-        const spotifyGenres = await fetchGenres()
+        const keywords = extractWords(horoscopeData.horoscope)
+        const mappedGenres = mapWords(keywords)
+
+        if (mappedGenres.length === 0) {
+          throw new Error('No genres mapped only given', mappedGenres)
+        }
+
+        //First did randomized genres, moved to mapping genres with horoscope text
+        /*const spotifyGenres = await fetchGenres()
         if (!spotifyGenres) {
           throw new Error('No genres avaliable')
         }
         const randomizedGenres = randomGenres(spotifyGenres, 3)
-        console.log("Random Genres", randomizedGenres)
+        console.log("Random Genres", randomizedGenres)*/
+
+        const spotifyAccessToken = await fetchToken()
+        console.log("Token", spotifyAccessToken)
+        req.session.spotifyAccessToken = spotifyAccessToken
+        await req.session.save()
+
+        props.spotifyAccessToken = spotifyAccessToken
 
 
-        const spotifyData = await fetchSpotify(randomizedGenres)
+        const spotifyData = await fetchSpotify(mappedGenres)
+
+        const artistData = await fetchArtists(mappedGenres)
 
         //console.log("Spotify Data", spotifyData)
+        //console.log("Artist Data", artistData)
         props.spotifyData = spotifyData || []
+        props.artistData = artistData || []
         //console.log("Spotify Props", props.spotifyData)
+
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+
+        const existingEntry = await HistoryEntry.findOne({
+          userId: dbUser._id,
+          createdAt: {
+            $gte: today,
+            $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+          }
+        })
+
+        if (!existingEntry) {
+          const createEntry = new HistoryEntry({
+            userId: dbUser._id,
+            horoscope: props.horoscope,
+            musicRecs: spotifyData.map(track => ({
+              id: track.id,
+              name: track.name,
+              artist: track.artists.map(artist => artist.name).join(', '),
+              url: track.external_urls.spotify,
+              image: track.album.images.length > 0 ? track.album.images[0].url : ''
+            })),
+            artistRecs: artistData.map(artist => ({
+              id: artist.id,
+              name: artist.name,
+              url: artist.external_urls.spotify,
+            })),
+          })
+          await createEntry.save()
+        }
+
       } catch (err) {
         console.error('Error fetching:', err)
         props.horoscope = { horoscope: 'Error fetching horoscope' }
         props.spotifyData = []
+        props.artistData = []
       }
-
-
-
-
-
-
-
 
 
     } else {
       props.isLoggedIn = false;
       props.horoscope = { prediction: 'No horoscope' }
+      props.spotifyData = []
+      props.artistData = []
     }
-    return { props };
+    return {
+      props
+    };
   },
   sessionOptions
 );
 
-export default function Dashboard(props) {
+export default function Dashboard({ spotifyAccessToken, ...props }) {
   const router = useRouter();
   const logout = useLogout();
+  const [recommendations, setRecommendations] = useState(props.spotifyData)
+  const [artists, setArtists] = useState(props.artistData)
+  const [player, setPlayer] = useState(null)
+  const [isInitialized, setIsInitialized] = useState(false)
+  const [trackProgress, setTrackProgress] = useState(0)
+  const [volume, setVolume] = useState(0.5)
+
+  //console.log("Artist", artists)
+  //console.log("Recommendations", recommendations)
+  console.log("Spotify Access:", spotifyAccessToken)
+
+  useEffect(() => {
+    console.log("Spotify Access Token:", spotifyAccessToken)
+    if (!spotifyAccessToken) return
+    const initializePlayer = () => {
+      console.log("Initializing Player")
+      const player = new window.Spotify.Player({
+        name: 'Web Playback SDK',
+        getOAuthToken: cb => { cb(spotifyAccessToken) },
+        volume: 0.5
+      })
+
+      player.addListener('ready', ({ device_id }) => {
+        console.log('Ready Device', device_id)
+        setIsInitialized(true)
+        setPlayer(player)
+      })
+
+      player.addListener('not_ready', ({ device_id }) => {
+        console.log('Offline Device', device_id)
+      })
+
+      player.addListener('player_state_changed', state => {
+        console.log('Player State Changed', state)
+      })
+
+      player.connect().then(success => {
+        if (success) {
+          console.log('The Web Playback SDK is connected to Spotify')
+        } else {
+          console.log('The Web Playback SDK failed to connect')
+        }
+      })
+
+      setPlayer(player)
+    }
+
+    if (window.Spotify) {
+      initializePlayer()
+    } else {
+      window.onSpotifyWebPlaybackSDKReady = initializePlayer
+    }
+
+  }, [spotifyAccessToken])
+
+  const doNextTrack = () => {
+    if (player) {
+      player.nextTrack().then(() => {
+        console.log("Track skipped")
+      })
+    }
+
+  }
+
+  const doPreviousTrack = () => {
+    if (player) {
+      player.PreviousTrack().then(() => {
+        console.log("Track to previous")
+      })
+    }
+  }
+
+  const doVolume = (e) => {
+    const volume = parseFloat(e.target.value)
+    setVolume(volume)
+    if (player) {
+      player.setVolume(volume).then(() => {
+        console.log(`Volume set to ${volume}`)
+      })
+    }
+
+  }
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -112,6 +265,10 @@ export default function Dashboard(props) {
             <h2>Home &rarr;</h2>
             <p>Return to the homepage.</p>
           </Link>
+          <Link href="/history" className={styles.card}>
+            <h2>Home &rarr;</h2>
+            <p>go to history.</p>
+          </Link>
 
           <div
             onClick={logout}
@@ -127,23 +284,74 @@ export default function Dashboard(props) {
 
             <h2>Horoscopes</h2>
             <p>{props.horoscope.prediction}</p>
-            <h2>Spotify Recommendations</h2>
-            {props.spotifyData.length > 0 ? (
+            <p>Remedy: {props.horoscope.remedy}</p>
+            <p>Color: {props.horoscope.color}</p>
+            <p>Lucky Number: {props.horoscope.number}</p>
+            <p>Element: {props.horoscope.element}</p>
+            <p>Compatibility: {props.horoscope.compatibility}</p>
+            <h2>Spotify Artist Recommendations</h2>
+            {artists.length > 0 ? (
               <ul>
-                {props.spotifyData.map((track) => (
+                {artists.map((artist) => (
+                  <li key={artist.id}>
+                    <a
+                      href={artist.external_urls.spotify}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {artist.name}
+                    </a>
+                    {artist.images && artist.images.length > 0 && (
+                      <img src={artist.images[0].url} alt={artist.name} width={50} height={50} />
+                    )}
+
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p> No Spotify recs..</p>
+            )}
+            <h2>Spotify Track Recommendations</h2>
+            {recommendations.length > 0 ? (
+              <ul>
+                {recommendations.map((track) => (
                   <li key={track.id}>
                     <a
                       href={track.external_urls.spotify}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {track.name}
+                      {track.name} by {track.artists.map(artist => artist.name).join(', ')}
                     </a>
+                    {track.album.images && track.album.images.length > 0 && (
+                      <img src={track.album.images[0].url} alt={track.name} width={50} height={50} />
+                    )}
+
                   </li>
                 ))}
               </ul>
             ) : (
-              <p> Loading recs..</p>
+              <p> No Spotify recs..</p>
+            )}
+            {isInitialized && (
+              <>
+                <button onClick={() => player.togglePlay()}>
+                  {player && player.paused ? 'Play' : 'Pause'}
+                </button>
+                <button onClick={doNextTrack}>Next</button>
+                <button onClick={doPreviousTrack}>Previous</button>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={volume}
+                  onChange={doVolume}
+                />
+                <div>
+                  <progress value={trackProgress} max={180}></progress>
+                </div>
+              </>
             )}
 
 

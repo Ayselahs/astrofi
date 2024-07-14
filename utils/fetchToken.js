@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export default async function fetchSpotify(genres) {
+export default async function fetchToken() {
     const clientId = process.env.SPOTIFY_ID
     const clientSecret = process.env.SPOTIFY_SECRET
     try {
@@ -22,26 +22,7 @@ export default async function fetchSpotify(genres) {
         //console.log("Token Res", tokenResponse)
 
         const token = tokenResponse.data.access_token;
-
-        //console.log("Genres: ", genres, Array.isArray(genres))
-
-        //console.log("Token", token)
-
-        const recommendRes = await axios.get(
-            "https://api.spotify.com/v1/recommendations",
-            {
-                headers: {
-                    'Authorization': "Bearer " + token,
-                },
-                params: {
-                    seed_genres: genres.join(','),
-                    limit: 5
-                }
-            }
-        );
-        //console.log("Recs", recommendRes)
-
-        return recommendRes.data.tracks
+        return token
     } catch (error) {
         console.error("Error fetching Spotify", error);
 

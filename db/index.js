@@ -3,6 +3,7 @@ import * as auth from './controllers/auth'
 import * as genre from './controllers/genre'
 import * as horoscope from './controllers/horoscope'
 import * as recommendation from './controllers/recommendations'
+import * as history from './controllers/historyEntry'
 
 
 
@@ -12,6 +13,7 @@ export default {
   auth,
   genre,
   horoscope,
-  recommendation
+  recommendation,
+  history
 
 }
