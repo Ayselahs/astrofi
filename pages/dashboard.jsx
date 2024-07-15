@@ -231,6 +231,26 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
 
   }
 
+  const handleLike = async (track) => {
+    try {
+      const response = await fetch('/api/likeTrack', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ track })
+      })
+      if (!response.ok) {
+        throw new Error('Failed to like')
+      }
+
+      const result = await response.json()
+      console.log('Track liked', result)
+    } catch (err) {
+      console.error('Error liking track')
+    }
+  }
+
 
   return (
     <div className={styles.container}>
@@ -266,7 +286,15 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
             <p>Return to the homepage.</p>
           </Link>
           <Link href="/history" className={styles.card}>
-            <h2>Home &rarr;</h2>
+            <h2>History &rarr;</h2>
+            <p>go to history.</p>
+          </Link>
+          <Link href="/profile" className={styles.card}>
+            <h2>Profile &rarr;</h2>
+            <p>go to history.</p>
+          </Link>
+          <Link href="/likedTracks" className={styles.card}>
+            <h2>Loved Songs &rarr;</h2>
             <p>go to history.</p>
           </Link>
 
@@ -326,6 +354,7 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
                     {track.album.images && track.album.images.length > 0 && (
                       <img src={track.album.images[0].url} alt={track.name} width={50} height={50} />
                     )}
+                    <button onClick={() => handleLike(track)}>Like</button>
 
                   </li>
                 ))}

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import ReactModal from "react-modal";
+import Link from "next/link";
+import styles from "../styles/Home.module.css";
 
 
 export default function Histroy() {
@@ -34,6 +36,10 @@ export default function Histroy() {
         <main>
 
             <div>
+                <Link href="/dashboard" className={styles.card}>
+                    <h2>Back to Dashboard &rarr;</h2>
+                    <p>go to Dashboard.</p>
+                </Link>
                 <h1>History</h1>
                 <ul>
                     {historyEntry.length > 0 ? (

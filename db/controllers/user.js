@@ -14,3 +14,30 @@ export async function create(username, password, zodiac) {
 
   return user.toJSON()
 }
+
+export async function getUser(req, res) {
+  await dbConnect()
+
+  const { id } = req.query
+
+  const user = await User.findById(id)
+
+  if (!user) {
+    throw new Error('No User found')
+  }
+  return { data: user }
+}
+
+
+export async function updateZodiac(req, res) {
+  await dbConnect()
+
+  const { userId, zodiac } = req.body
+  const user = await User.findByIdAndUpdate(userId, { zodiac }, { new: true })
+
+  if (!user) {
+    throw new Error('No User found')
+  }
+
+  return { data: user }
+}
