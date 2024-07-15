@@ -291,11 +291,11 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
           </Link>
           <Link href="/profile" className={styles.card}>
             <h2>Profile &rarr;</h2>
-            <p>go to history.</p>
+            <p>go to profile.</p>
           </Link>
           <Link href="/likedTracks" className={styles.card}>
             <h2>Loved Songs &rarr;</h2>
-            <p>go to history.</p>
+            <p>go to loved songs.</p>
           </Link>
 
           <div

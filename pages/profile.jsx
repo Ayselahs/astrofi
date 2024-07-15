@@ -57,6 +57,7 @@ export default function Profile({ user }) {
         }
     }
 
+
     return (
         <div>
             <Link href="/dashboard" className={styles.card}>
