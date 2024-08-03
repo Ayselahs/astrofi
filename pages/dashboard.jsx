@@ -2,7 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Footer.module.css";
 import { withIronSessionSsr } from "iron-session/next";
 import sessionOptions from "../config/session";
 import Header from "../components/header";
@@ -24,6 +24,8 @@ import { extractWords, mapWords } from "@/utils/mapHoroscope";
 import { randomGenres } from '../pages/api/genre'
 import SpotifyWebPlayer from "react-spotify-web-playback";
 import { useEffect, useState } from "react";
+import Sidebar from "@/components/header/Sidebar";
+import dashStyles from "../styles/Dashboard.module.css"
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
@@ -44,15 +46,14 @@ export const getServerSideProps = withIronSessionSsr(
         console.log("Zodiac", zodiac)
 
         const horoscopeData = await fetchDailyHoroscope(zodiac)
-        const predictionData = await fetchHoroscope(zodiac)
+        //const predictionData = await fetchHoroscope(zodiac)
         const signData = await fetchSignData(zodiac)
         //console.log("Horoscope Data", horoscopeData)
         props.horoscope = {
           zodiac,
-          prediction: predictionData.prediction || 'No prediction',
-          color: predictionData.color || '',
-          remedy: predictionData.remedy || '',
-          number: predictionData.number || '',
+          prediction: horoscopeData.horoscope || 'No prediction',
+          //color: predictionData.color || '',
+          number: horoscopeData.lucky_number || '',
           compatibility: signData.compatibility || '',
           date: signData.date_range || '',
           element: signData.element || ''
@@ -119,6 +120,9 @@ export const getServerSideProps = withIronSessionSsr(
               id: artist.id,
               name: artist.name,
               url: artist.external_urls.spotify,
+              images: artist.images.map(image => ({
+                url: image.url,
+              }))
             })),
           })
           await createEntry.save()
@@ -153,11 +157,12 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
   const [player, setPlayer] = useState(null)
   const [isInitialized, setIsInitialized] = useState(false)
   const [trackProgress, setTrackProgress] = useState(0)
+  const [tracks, setTracks] = useState([])
   const [volume, setVolume] = useState(0.5)
 
   //console.log("Artist", artists)
   //console.log("Recommendations", recommendations)
-  console.log("Spotify Access:", spotifyAccessToken)
+  //console.log("Spotify Access:", spotifyAccessToken)
 
   useEffect(() => {
     console.log("Spotify Access Token:", spotifyAccessToken)
@@ -201,6 +206,7 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
       window.onSpotifyWebPlaybackSDKReady = initializePlayer
     }
 
+
   }, [spotifyAccessToken])
 
   const doNextTrack = () => {
@@ -231,28 +237,160 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
 
   }
 
+
+
   const handleLike = async (track) => {
+
+    const likedTrack = {
+      id: track.id,
+      name: track.name,
+      url: track.external_urls.spotify,
+      image: track.album.images[0].url,
+      artist: track.artists.map(artist => artist.name).join(', ')
+    }
+
     try {
       const response = await fetch('/api/likeTrack', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ track })
+        body: JSON.stringify({ track: likedTrack })
       })
       if (!response.ok) {
         throw new Error('Failed to like')
       }
 
       const result = await response.json()
+      setTracks((prev) => [...prev, likedTrack])
       console.log('Track liked', result)
     } catch (err) {
-      console.error('Error liking track')
+      console.error('Error liking track', err)
+    }
+  }
+
+  const handleUnlike = async (trackId) => {
+    try {
+      const response = await fetch('/api/likeTrack', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ trackId })
+      })
+      if (!response.ok) {
+        throw new Error('Failed to like')
+      }
+
+      const result = await response.json()
+      setTracks((prev) => prev.filter((track) => track.id !== trackId))
+      console.log('Track unliked', result)
+    } catch (err) {
+      console.error('Error liking track', err)
     }
   }
 
 
   return (
+    <>
+      <div>
+        <Sidebar />
+        <main className={dashStyles.dashboard}>
+          <h1 className={dashStyles.bigTitle}>Daily Horoscope Recommendations</h1>
+          <section className={dashStyles.horoscope}>
+            <p className={dashStyles.horoText}>
+              {props.horoscope.prediction}
+            </p>
+            <div className={dashStyles.horoDetails}>
+              <div className={dashStyles.horoItem}>
+                <h3 className={dashStyles.horoLabel}>Element</h3>
+                <p className={dashStyles.horoValue}>{props.horoscope.element}</p>
+              </div>
+              <div className={dashStyles.horoItem}>
+                <h3 className={dashStyles.horoLabel}>Compatibility</h3>
+                <p className={dashStyles.horoValue}>{props.horoscope.compatibility}</p>
+              </div>
+              <div className={dashStyles.horoItem}>
+                <h3 className={dashStyles.horoLabel}>Lucky Number</h3>
+                <p className={dashStyles.horoValue}>{props.horoscope.number}</p>
+              </div>
+            </div>
+          </section>
+          <section className={dashStyles.artist}>
+            <h2 className={dashStyles.artistTitle}>Recommended Artists</h2>
+            <div className={dashStyles.artistList}>
+              {artists.map((artist) => (
+                <div key={artist.id} className={dashStyles.artistItem}>
+                  {artist.images && artist.images.length > 0 && (
+                    <img className={dashStyles.artistImg} src={artist.images[0].url} alt={artist.name} width={50} height={50} />
+                  )}
+                  <a
+                    href={artist.external_urls.spotify}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <p className={dashStyles.artistName}>{artist.name}</p>
+
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section className={dashStyles.song}>
+            <h2 className={dashStyles.sectionTitle}>Recommended Songs</h2>
+            <div className={dashStyles.songList}>
+              {recommendations.length > 0 ? (
+                recommendations.map((track) => (
+                  <div className={dashStyles.songItem} key={track.id}>
+                    {track.album.images && track.album.images.length > 0 && (
+                      <img className={dashStyles.songImg} src={track.album.images[0].url} alt={track.name} />
+                    )}
+
+                    <div className={dashStyles.songDetails}>
+                      <a
+                        href={track.external_urls.spotify}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <div className={dashStyles.songTitle}>{track.name}</div>
+                        <div className={dashStyles.songArtist}>by {track.artists.map(artist => artist.name).join(', ')}</div>
+                      </a>
+                      {tracks.some((t) => t.id === track.id) ? (
+                        <button className={dashStyles.likeBtn} onClick={() => handleUnlike(track.id)}>
+                          <img src="/bookmark_filled.png" alt="Menu" className="" />
+                        </button>
+                      ) : (
+                        <button className={dashStyles.likeBtn} onClick={() => handleLike(track)}>
+                          <img src="/bookmark_filled.png" alt="Menu" className="" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p> No Spotify recs..</p>
+              )}
+            </div>
+          </section>
+        </main>
+        <footer className={styles.footer}>
+          <a
+            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Powered by{" "}
+            <span className={styles.logo}>
+              <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
+            </span>
+          </a>
+        </footer>
+      </div>
+
+
+
+    </>
+    /*
     <div className={styles.container}>
       <Head>
         <title>Create Next App</title>
@@ -401,5 +539,6 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
         </a>
       </footer>
     </div>
+    */
   );
 }

@@ -35,7 +35,7 @@ export default async function fetchSpotify(genres) {
                 },
                 params: {
                     seed_genres: genres.join(','),
-                    limit: 5
+                    limit: 7
                 }
             }
         );

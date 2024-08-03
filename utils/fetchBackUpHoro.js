@@ -49,3 +49,24 @@ export async function fetchSignData(zodiac) {
 
 }
 
+export async function fetchQuoteData() {
+
+    const options = {
+        method: 'GET',
+        url: 'https://horoscope-astrology.p.rapidapi.com/dailyphrase',
+        headers: {
+            'x-rapidapi-key': process.env.RADPIDAPI_KEY,
+            'x-rapidapi-host': process.env.RADPIDAPI_HOST
+        }
+    };
+
+    try {
+        const response = await axios.request(options);
+        //console.log(response.data);
+        return response.data
+    } catch (error) {
+        console.error('Cannot fetch Horoscope', error);
+    }
+
+}
+

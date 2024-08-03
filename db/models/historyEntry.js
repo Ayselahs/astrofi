@@ -11,14 +11,6 @@ const HistoryEntrySchema = new Schema({
             type: String,
             required: true
         },
-        remedy: {
-            type: String,
-            required: true
-        },
-        color: {
-            type: String,
-            required: true
-        },
         number: {
             type: String,
             required: true
@@ -75,6 +67,13 @@ const HistoryEntrySchema = new Schema({
             type: String,
             required: true
         },
+        images: [{
+            url: {
+                type: String,
+                required: true
+            }
+
+        }]
 
     }],
     createdAt: {

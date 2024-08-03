@@ -3,6 +3,7 @@ import { withIronSessionApiRoute } from "iron-session/next";
 import sessionOptions from "../../config/session"
 import User from '../../db/models/user'
 import mongoose from "mongoose";
+import { addTracks, removeTracks } from "@/db/controllers/likedTracks";
 
 
 
@@ -12,67 +13,52 @@ export default withIronSessionApiRoute(
         const sessionUser = req.session.username
         switch (req.method) {
             case 'POST':
-
-                //onsole.log("User", sessionUser)
-
-                if (!sessionUser) {
-                    res.status(401).json()
-                }
-
-                //const userName = sessionUser.username
-                //console.log("sessionUser.username", userName)
-
-                await dbConnect()
-
                 try {
-                    console.log("Connecting to database")
-                    const dbUser = await User.findOne({ sessionUser }).exec()
-                    console.log("dbUser", dbUser)
+                    //onsole.log("User", sessionUser)
+                    const addedTrack = await addTracks(sessionUser, track)
 
-                    if (!dbUser) {
-                        res.status(404).json()
+                    if (!addedTrack) {
+                        res.status(401).json({ message: 'User not found or track not added' })
                     }
 
-                    if (!dbUser.likedTracks.some(likedTrack => likedTrack.id === track.id)) {
-                        dbUser.likedTracks.push(track)
-                    }
+                    return res.status(200).json({ message: 'Track added', track })
+
+                    //const userName = sessionUser.username
+                    //console.log("sessionUser.username", userName)
 
 
-                    await dbUser.save()
-                    res.status(200).json()
+
+
                 } catch (err) {
-                    res.status(500).json()
+                    res.status(500).json({ message: 'Internal error', err })
                 }
             case 'DELETE':
                 const { trackId } = req.body
 
-                //onsole.log("User", sessionUser)
-
-                //const userName = sessionUser.username
-                //console.log("sessionUser.username", userName)
-
-                await dbConnect()
-                console.log("Connecting to database")
-
                 try {
-                    console.log("Connecting to database")
-                    const dbUser = await User.findOne({ sessionUser }).exec()
-                    console.log("dbUser", dbUser)
+                    //onsole.log("User", sessionUser)
 
-                    if (!dbUser) {
-                        res.status(404).json()
+                    const success = await removeTracks(sessionUser, trackId)
+
+                    if (!success) {
+                        return res.status(404).json({ message: 'User not found or track not removed' })
                     }
 
-                    dbUser.likedTracks = dbUser.likedTracks.filter(likedTrack => likedTrack.id !== trackId)
+                    return res.status(200).json({ message: 'Track removed' })
+
+                    //const userName = sessionUser.username
+                    //console.log("sessionUser.username", userName)
 
 
-                    await dbUser.save()
-                    res.status(200).json()
+
+
+
+
                 } catch (err) {
-                    res.status(500).json()
+                    res.status(500).json({ message: 'Internal error', err })
                 }
             default:
-                res.status(404).end
+                res.status(405).end('Method not Allowed')
 
         }
     }, sessionOptions

@@ -17,7 +17,7 @@ export default async function fetchArtists(genres) {
                 },
                 params: {
                     seed_genres: genres.join(','),
-                    limit: 5
+                    limit: 7
                 }
             }
         );
@@ -25,11 +25,22 @@ export default async function fetchArtists(genres) {
 
         const artistRecs = artistRes.data.tracks
         const artists = artistRecs.map(track => track.artists).flat()
-        const uniquePicks = Array.from(new Set(artists.map(artist => artist.id))).map(id => artists.find(artist => artist.id === id))
+        const uniquePicks = Array.from(new Set(artists.map(artist => artist.id)))
+
+        const artistDetails = await Promise.all(
+            uniquePicks.map(async (id) => {
+                const artistDetailsRes = await axios.get(`https://api.spotify.com/v1/artists/${id}`, {
+                    headers: {
+                        'Authorization': "Bearer " + token,
+                    }
+                })
+                return artistDetailsRes.data
+            })
+        )
 
         //console.log("Unique", uniquePicks)
 
-        return uniquePicks
+        return artistDetails
 
     } catch (error) {
         console.error("Error fetching Artists", error);

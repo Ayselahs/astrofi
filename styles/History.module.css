@@ -1,0 +1,153 @@
+.layout {
+    background-color: #fff;
+    display: flex;
+    height: 100vh;
+}
+
+.main {
+    background-color: rgba(11, 10, 13, 1);
+    display: flex;
+    flex-direction: column;
+    margin-left: 250px;
+    padding: 80px 42px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.history {
+    border-radius: 14px;
+    background-color: #fdf6f0;
+    display: flex;
+    margin-top: 30px;
+    flex-direction: column;
+    font-size: 16px;
+    color: #5157a6;
+    font-weight: 500;
+    padding: 51px 61px;
+}
+
+.title {
+    color: #fff;
+    align-self: flex-start;
+    font: 400 48px Magiesta, sans-serif;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.entry {
+    display: flex;
+    align-items: center;
+    padding: 10px 10px;
+}
+
+.icon {
+    border-radius: 8px;
+    background-color: #12112e;
+    width: 47px;
+    height: 47px;
+    flex-shrink: 0;
+}
+
+.text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px 10px;
+    cursor: pointer;
+    flex-grow: 1;
+}
+
+.date {
+    font-family: "Open Sans Condensed", sans-serif;
+    font-weight: 700;
+}
+
+.descrip {
+    font-family: "Open Sans Condensed", sans-serif;
+    margin-top: 8px;
+    font-weight: 400;
+}
+
+.divider {
+    height: 1px;
+    border: 1px solid #6f6b6b;
+}
+
+.modal {
+    background-color: black;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    margin: auto;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    transform: translate(-10%, -10%);
+
+}
+
+.overlay {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.deleteBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 58px;
+    background-color: #d9d9d9;
+    color: black;
+    border: none;
+    padding: 8px 28px;
+    font-family: 'Magiesta', sans-serif;
+    font-size: 20px;
+}
+
+@media (max-width: 991px) {
+    .main {
+        max-width: 100%;
+        padding: 0 20px;
+        margin: 0
+    }
+
+    .history {
+        max-width: 100%;
+        padding: 0 20px;
+    }
+
+    .title {
+        max-width: 100%;
+        font-size: 40px;
+    }
+
+    .item {
+        flex-wrap: wrap;
+    }
+
+    .text {
+        max-width: 100%;
+    }
+
+    .date {
+        max-width: 100%;
+    }
+
+    .descrip {
+        max-width: 100%;
+    }
+
+    .divider {
+        max-width: 100%;
+    }
+}

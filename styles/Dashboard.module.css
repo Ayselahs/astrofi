@@ -1,0 +1,263 @@
+.layout {
+    background-color: white;
+    display: flex;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.dashboard {
+    background-color: #0b0a0d;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-grow: 1;
+    padding: 5px;
+    margin-left: 250px;
+    overflow: hidden;
+    width: calc(100% - 250px);
+    box-sizing: border-box;
+}
+
+.bigTitle {
+    color: #fff;
+    font: 400 45px Magiesta, sans-serif;
+    text-align: center;
+}
+
+.horoscope {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    padding: 0 66px;
+    flex-grow: 1;
+    box-sizing: border-box;
+}
+
+.horoText {
+    text-align: center;
+    align-self: end;
+    font: 400 32px Magiesta, sans-serif;
+}
+
+.horoDetails {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    font-size: 28px;
+    justify-content: space-between;
+}
+
+.horoItem {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.horoLabel {
+    font-family: Magiesta, sans-serif;
+    font-weight: 400;
+}
+
+.horoValue {
+    font-family: "Open Sans Condensed", -apple-system, Roboto, Helvetica, sans-serif;
+    font-weight: 700;
+    margin-top: 11px;
+}
+
+/*Artist*/
+
+.artist {
+    display: flex;
+    margin-top: 19px;
+    flex-direction: column;
+    padding: 0 63px 0 18px;
+    flex-grow: 1;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.artistTitle {
+    color: #fff;
+    font: 400 35px Magiesta, sans-serif;
+    flex-shrink: 0;
+}
+
+.artistList {
+    align-self: right;
+    display: flex;
+    gap: 20px;
+    margin-left: 50px;
+}
+
+.artistItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 32px;
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.artistImg {
+    aspect-ratio: 1;
+    object-fit: cover;
+    width: 172px;
+    height: 172px;
+    border-radius: 50%;
+}
+
+.artistName {
+    font-family: "Open Sans Condensed", -apple-system, Roboto, Helvetica, sans-serif;
+    margin-top: 19px;
+}
+
+/*Songs*/
+
+.song {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 40px 0 0 18px;
+}
+
+.sectionTitle {
+    color: #fff;
+    text-align: left;
+    margin-top: 0;
+    font: 400 35px Magiesta, sans-serif;
+    flex-shrink: 0;
+}
+
+.songList {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.songItem {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    position: relative;
+    min-width: 300px;
+    background-color: #1c1c1e;
+    border-radius: 10px;
+    transition: 0.15s ease-in;
+    overflow: hidden;
+}
+
+.songImg {
+    width: 100%;
+    display: block;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.songDetails {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+    position: relative;
+}
+
+.songDetails a {
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.2;
+    padding-right: 1rem;
+    text-decoration: none;
+    color: white;
+    will-change: transform;
+}
+
+.likeBtn {
+    background: none;
+    border: none;
+    position: absolute;
+    top: 8px;
+    right: 14px;
+    width: 29px;
+    cursor: pointer;
+    display: flex;
+    border: 1px;
+    border-color: #0b0a0d;
+}
+
+.songInfo {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    color: #333
+}
+
+.songTitle {
+    font: 700 20px "Open Sans Condensed", -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+.songArtist {
+    font: 300 16px "Open Sans Condensed", -apple-system, Roboto, Helvetica, sans-serif;
+
+}
+
+
+@media (max-width: 991px) {
+
+    .dashboard {
+        margin: 0
+    }
+
+    .horoscope {
+        max-width: 100%;
+        padding: 0 20px;
+    }
+
+    .horoText {
+        max-width: 100%;
+    }
+
+    .horoDetails {
+        max-width: 100%;
+        flex-wrap: wrap;
+        padding-right: 20px;
+        margin-top: 40px;
+    }
+
+    /*Artist*/
+
+    .artist {
+        max-width: 100%;
+        padding-right: 20px;
+    }
+
+    .artistTitle {
+        max-width: 100%;
+    }
+
+    .artistList {
+        flex-wrap: wrap;
+    }
+
+    /*Songs*/
+
+    .song {
+        max-width: 100%;
+        padding-right: 20px;
+    }
+
+    .sectionTitle {
+        max-width: 100%;
+    }
+
+    .songList {
+        flex-direction: column;
+    }
+
+    .songInfo {
+        margin-top: 40px;
+        padding: 0 20px;
+    }
+}

@@ -1,24 +1,48 @@
 import { useState, useEffect } from "react";
 import ReactModal from "react-modal";
 import Link from "next/link";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Footer.module.css";
+import historyStyles from "../styles/History.module.css"
+import Sidebar from "@/components/header/Sidebar";
+import dashStyles from "../styles/Dashboard.module.css"
 
 
 export default function Histroy() {
+    454
     const [historyEntry, setHistoryEntry] = useState([])
     const [selectedEntry, setSelectedEntry] = useState(null)
+    const [likedTracks, setLikedTracks] = useState([])
 
     useEffect(() => {
         async function fetchHistoryEntries() {
             try {
+                console.log("In here")
                 const response = await fetch('/api/historyEntry')
                 const data = await response.json()
+                console.log("Data", data)
                 setHistoryEntry(data)
+                console.log("Data", data)
             } catch (err) {
                 console.error('Error fetching entires', err)
             }
 
         }
+
+        const fetchLikedTracks = async () => {
+            try {
+                const response = await fetch('/api/likeTrack')
+                if (!response.ok) {
+                    throw new Error('Failed to like')
+                }
+
+                const result = await response.json()
+                setLikedTracks(result.likedTracks)
+                console.log('Track liked', result)
+            } catch (err) {
+                console.error('Error liking track', err)
+            }
+        }
+        fetchLikedTracks()
 
         fetchHistoryEntries()
     }, [])
@@ -32,7 +56,176 @@ export default function Histroy() {
         setSelectedEntry(null)
     }
 
+    const handleLike = async (track) => {
+        try {
+            const response = await fetch('/api/likeTrack', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ track })
+            })
+            if (!response.ok) {
+                throw new Error('Failed to like')
+            }
+
+            const result = await response.json()
+            setLikedTracks((prev) => [...prev, track])
+            console.log('Track liked', result)
+        } catch (err) {
+            console.error('Error liking track', err)
+        }
+    }
+
+    const handleUnlike = async (trackId) => {
+        try {
+            const response = await fetch('/api/likeTrack', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ trackId })
+            })
+            if (!response.ok) {
+                throw new Error('Failed to like')
+            }
+
+            const result = await response.json()
+            setLikedTracks((prev) => prev.filter((track) => track.id !== trackId))
+            console.log('Track unliked', result)
+        } catch (err) {
+            console.error('Error liking track', err)
+        }
+    }
+
     return (
+        <>
+            <main className={historyStyles.layout}>
+                <Sidebar />
+                <div className={historyStyles.main}>
+                    <h1 className={historyStyles.title}>Recommendations History</h1>
+                    <div className={historyStyles.divider} aria-hidden="true">
+                        <section className={historyStyles.history}>
+
+                            <div className={historyStyles.item}>
+                                {historyEntry.length > 0 ? (
+                                    historyEntry.map((entry) => (
+                                        <div key={entry.id} className={historyStyles.entry} onClick={() => openModal(entry)}>
+                                            <div className={historyStyles.icon} />
+                                            <div className={historyStyles.text} >
+                                                <div className={historyStyles.date}>{new Date(entry.createdAt).toLocaleDateString()}</div>
+                                                <div className={historyStyles.descrip}>{entry.horoscope.prediction.slice(0, 90)}...</div>
+                                            </div>
+
+                                        </div>
+
+                                    ))
+                                ) : (
+                                    <p>No history entries found</p>
+                                )}
+                                <div className={historyStyles.divider} />
+                            </div>
+
+                        </section>
+                    </div>
+                    {selectedEntry && (
+
+                        <ReactModal
+                            isOpen={!!selectedEntry}
+                            onRequestClose={closeModal}
+                            contentLabel="Entry Details"
+                            className={historyStyles.modal}
+                            overlayClassName={historyStyles.overlay}
+                        >
+                            <main className={dashStyles.dashboard}>
+                                <button className={historyStyles.closeBtn} onClick={closeModal}>Close</button>
+                                <section className={dashStyles.horoscope}>
+                                    <p className={dashStyles.horoText}>
+                                        {selectedEntry.horoscope.prediction}
+                                    </p>
+                                    <div className={dashStyles.horoDetails}>
+                                        <div className={dashStyles.horoItem} key="element">
+                                            <h3 className={dashStyles.horoLabel}>Element</h3>
+                                            <p className={dashStyles.horoValue}>{selectedEntry.horoscope.element}</p>
+                                        </div>
+                                        <div className={dashStyles.horoItem} key="compatibility">
+                                            <h3 className={dashStyles.horoLabel}>Compatibility</h3>
+                                            <p className={dashStyles.horoValue}>{selectedEntry.horoscope.compatibility}</p>
+                                        </div>
+                                        <div className={dashStyles.horoItem} key="number">
+                                            <h3 className={dashStyles.horoLabel}>Lucky Number</h3>
+                                            <p className={dashStyles.horoValue}>{selectedEntry.horoscope.number}</p>
+                                        </div>
+                                    </div>
+                                </section>
+                                <section className={dashStyles.artist}>
+                                    <h2 className={dashStyles.artistTitle}>Recommended Artists</h2>
+                                    <div className={dashStyles.artistList}>
+                                        {selectedEntry.artistRecs.map((artist) => (
+                                            <div key={artist.id} className={dashStyles.artistItem}>
+                                                {artist.images[0].url && artist.images[0].url.length > 0 && (
+                                                    <img className={dashStyles.artistImg} src={artist.images[0].url} alt={artist.name} width={50} height={50} />
+                                                )}
+                                                <a
+                                                    href={artist.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    <p className={dashStyles.artistName}>{artist.name}</p>
+
+                                                </a>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+                                <section className={dashStyles.song}>
+                                    <h2 className={dashStyles.sectionTitle}>Recommended Songs</h2>
+                                    <div className={dashStyles.songList}>
+                                        {selectedEntry.musicRecs.length > 0 ? (
+                                            <div className={dashStyles.songList}>
+                                                {selectedEntry.musicRecs.map((track) => (
+                                                    <div className={dashStyles.songItem} key={track.id}>
+                                                        {track.image && track.image.length > 0 && (
+                                                            <img className={dashStyles.songImg} src={track.image} alt={track.name} width={50} height={50} />
+                                                        )}
+                                                        <div className={dashStyles.songDetails}>
+                                                            <button className={dashStyles.likeBtn} onClick={() => handleLike(track)}>
+                                                                <img src="/bookmark_filled.png" alt="Menu" className="" />
+                                                            </button>
+                                                            <div>
+                                                                <a
+                                                                    href={track.url}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                >
+                                                                    <div className={dashStyles.songTitle}>{track.name}</div>
+                                                                    <div className={dashStyles.songArtist}>by {track.artist}</div>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+
+
+
+
+
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p> No Spotify recs..</p>
+                                        )}
+
+                                    </div>
+                                    <button className={historyStyles.closeBtn} onClick={closeModal}>Close</button>
+                                </section>
+                            </main>
+
+                        </ReactModal>
+                    )}
+                </div>
+            </main>
+        </>
+        /*
         <main>
 
             <div>
@@ -120,6 +313,7 @@ export default function Histroy() {
                 )}
             </div>
         </main>
+        */
 
     )
 }

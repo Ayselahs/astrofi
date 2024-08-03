@@ -1,5 +1,5 @@
 import axios from 'axios'
-export default async function fetchHoroscope(zodiac) {
+/* export default async function fetchHoroscope(zodiac) {
 
     const options = {
         method: 'GET',
@@ -17,7 +17,7 @@ export default async function fetchHoroscope(zodiac) {
         return response.data
     } catch (error) {
         console.error(error);
-    }
+    } 
 
 
 
@@ -27,7 +27,7 @@ export default async function fetchHoroscope(zodiac) {
 
 
 
-}
+} */
 
 
 

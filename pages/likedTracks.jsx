@@ -5,7 +5,9 @@ import axios from 'axios'
 import dbConnect from '@/db/connection';
 import User from '../db/models/user'
 import Link from "next/link";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/Footer.module.css";
+import historyStyles from "../styles/History.module.css"
+import Sidebar from "@/components/header/Sidebar";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req }) {
@@ -59,46 +61,58 @@ export default function LikedPage({ likedTracks }) {
             })
 
             console.log("Response", response)
-
-            if (response.ok) {
-                setTracks(tracks.filter(track => track.id !== trackId))
-            } else {
-                console.error("Failed to delete")
+            if (!response.ok) {
+                throw new Error('Failed to like')
             }
+
+            const result = await response.json()
+            console.log("Result", result)
+            setTracks((prevTracks) => prevTracks.filter((track) => track.id !== trackId))
+
         } catch (err) {
             console.error("Error:", err)
         }
     }
 
     return (
-        <div>
-            <Link href="/dashboard" className={styles.card}>
-                <h2>Back to Dashboard &rarr;</h2>
-                <p>go to Dashboard.</p>
-            </Link>
-            <h1>Liked Songs Playlist</h1>
-            {tracks.length > 0 ? (
-                <ul>
-                    {likedTracks.map((track) => (
-                        <li key={track.id}>
-                            <a
-                                href={track.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {track.name} {track.artist}
-                            </a>
-                            {track.image && (
-                                <img src={track.image} alt={track.name} width={50} height={50} />
-                            )}
-                            <button onClick={() => handleDeleteTrack(track.id)}>Delete</button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No liked tracks</p>
-            )}
+        <>
+            <main className={historyStyles.layout}>
+                <Sidebar />
+                <div className={historyStyles.main}>
+                    <h1 className={historyStyles.title}>Loved Playlist</h1>
+                    <section className={historyStyles.history}>
+                        <div className={historyStyles.item}>
+                            {tracks.length > 0 ? (
+                                tracks.map((track) => (
+                                    <div className={historyStyles.entry}>
+                                        {track.image && (
+                                            <img className={historyStyles.icon} src={track.image} alt={track.name} width={50} height={50} />
+                                        )}
 
-        </div>
+                                        <div className={historyStyles.text} key={track.id}>
+                                            <a
+                                                href={track.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                <div className={historyStyles.date}>{track.name}</div>
+
+                                            </a>
+                                            <div className={historyStyles.descrip}>{track.artist}</div>
+
+                                        </div>
+                                        <button lassName={historyStyles.deletebtn} onClick={() => handleDeleteTrack(track.id)}>Delete</button>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No liked tracks</p>
+                            )}
+                        </div>
+                    </section>
+                </div>
+            </main >
+
+        </>
+
     )
 }
