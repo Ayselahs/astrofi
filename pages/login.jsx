@@ -97,7 +97,7 @@ export default function Login(props) {
 
           </form>
           <div className={loginStyles.text}>
-            Don't have an account? <a href="/signup" className={loginStyles.link}>Sign Up</a>
+            Don't have an account? <Link href="/signup" className={loginStyles.link}>Sign Up</Link>
           </div>
 
         </div>

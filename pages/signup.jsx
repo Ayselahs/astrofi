@@ -120,7 +120,7 @@ export default function Signup(props) {
             <div className={signupStyles.divider} />
             <button className={signupStyles.loginBtn}>Sign Up</button>
             <div className={signupStyles.text}>
-              Have an account? <a href="/login" className={signupStyles.link}>Login</a>
+              Have an account? <Link href="/login" className={signupStyles.link}>Login</Link>
             </div>
           </form>
 

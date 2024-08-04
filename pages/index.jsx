@@ -56,7 +56,7 @@ export default function Index(props) {
             <nav className={Home.nav}>
 
               <div className={Home.loginBtn}>
-                <a href="/login" className="">Login</a>
+                <Link href="/login" >Login</Link>
               </div>
 
               <img
@@ -66,7 +66,7 @@ export default function Index(props) {
                 alt="logo"
               />
               <div className={Home.signupBtn}>
-                <a href="/signup" className="">Sign Up</a>
+                <Link href="/signup" >Sign Up</Link>
               </div>
             </nav>
           </header>
