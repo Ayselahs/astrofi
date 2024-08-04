@@ -39,19 +39,17 @@ export default function Index(props) {
   return (
     <>
       <main className={Home.container}>
-        <img
-          loading="lazy"
+        <Image loading="lazy"
           src="/Bg-1.png"
           className={Home.bgImg}
-          alt="Background"
-        />
+          alt="Background" />
+
         <div className={Home.wrappeer}>
-          <img
-            loading="lazy"
+          <Image loading="lazy"
             src="/Bg-2.png"
             className={Home.bgImg}
-            alt="Overlay"
-          />
+            alt="Overlay" />
+
           <header className={Home.header}>
             <nav className={Home.nav}>
 

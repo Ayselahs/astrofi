@@ -12,13 +12,13 @@ export default function Sidebar() {
     return (
         <aside className={`${sidebar.sidebar} ${menuOpen ? sidebar.open : ''}`}>
             <div className={sidebar.header}>
-                <img
-                    src='/Logo 1.png'
+                <Image src='/Logo 1.png'
                     alt=''
-                    className={sidebar.logo}
-                />
+                    className={sidebar.logo} />
+
                 <button className={sidebar.hamburger} onClick={toggleMenu}>
-                    <img src="/container.png" alt="Menu" className={sidebar.hamburgerIcon} />
+                    <Image src="/container.png" alt="Menu" className={sidebar.hamburgerIcon} />
+
                 </button>
             </div>
             <nav className={sidebar.nav}>

@@ -54,6 +54,10 @@ export default function Login(props) {
   return (
     <>
       <main className={loginStyles.login}>
+        <Image loading="lazy"
+          src="/noisy-gradients.png"
+          className={loginStyles.bgImg}
+          alt="" />
         <img
           loading="lazy"
           src="/noisy-gradients.png"

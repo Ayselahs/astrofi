@@ -322,7 +322,8 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
               {artists.map((artist) => (
                 <div key={artist.id} className={dashStyles.artistItem}>
                   {artist.images && artist.images.length > 0 && (
-                    <img className={dashStyles.artistImg} src={artist.images[0].url} alt={artist.name} width={50} height={50} />
+                    <Image className={dashStyles.artistImg} src={artist.images[0].url} alt={artist.name} width={50} height={50} />
+
                   )}
                   <a
                     href={artist.external_urls.spotify}
@@ -343,7 +344,7 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
                 recommendations.map((track) => (
                   <div className={dashStyles.songItem} key={track.id}>
                     {track.album.images && track.album.images.length > 0 && (
-                      <img className={dashStyles.songImg} src={track.album.images[0].url} alt={track.name} />
+                      <Image className={dashStyles.songImg} src={track.album.images[0].url} alt={track.name} />
                     )}
 
                     <div className={dashStyles.songDetails}>
@@ -357,11 +358,12 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
                       </a>
                       {tracks.some((t) => t.id === track.id) ? (
                         <button className={dashStyles.likeBtn} onClick={() => handleUnlike(track.id)}>
-                          <img src="/heart.png" alt="Menu" className="" />
+                          <Image src="/heart.png" alt="unlike" />
                         </button>
                       ) : (
                         <button className={dashStyles.likeBtn} onClick={() => handleLike(track)}>
-                          <img src="/Heart-2.png" alt="Menu" className="" />
+                          <Image src="/Heart-2.png" alt="like" />
+
                         </button>
                       )}
                     </div>

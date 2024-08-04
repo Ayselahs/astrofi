@@ -95,12 +95,11 @@ export default function Profile({ user, ...props }) {
                         <blockquote className={profileStyles.quote}>{props.quote.dailyQuote}</blockquote>
                     </header>
                     <section className={profileStyles.user}>
-                        <img
-                            loading="lazy"
+                        <Image loading="lazy"
                             src="/Mask group.png"
                             className={profileStyles.avatar}
-                            alt="avatar"
-                        />
+                            alt="avatar" />
+
                         <div className={profileStyles.info}>
                             <h1 className={profileStyles.userName}>{userData.username}</h1>
                             {!isEditing && <p className={profileStyles.userName}>{userData.zodiac}</p>}

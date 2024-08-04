@@ -51,6 +51,10 @@ export default function Signup(props) {
   return (
     <>
       <main className={signupStyles.login}>
+        <Image loading="lazy"
+          src="/noisy-gradients.png"
+          className={signupStyles.bgImg}
+          alt="" />
         <img
           loading="lazy"
           src="/noisy-gradients.png"

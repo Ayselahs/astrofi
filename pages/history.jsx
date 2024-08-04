@@ -148,7 +148,8 @@ export default function Histroy() {
                                         {selectedEntry.artistRecs.map((artist) => (
                                             <div key={artist.id} className={dashStyles.artistItem}>
                                                 {artist.images[0].url && artist.images[0].url.length > 0 && (
-                                                    <img className={dashStyles.artistImg} src={artist.images[0].url} alt={artist.name} width={50} height={50} />
+                                                    <Image className={dashStyles.artistImg} src={artist.images[0].url} alt={artist.name} width={50} height={50} />
+
                                                 )}
                                                 <a
                                                     href={artist.url}
@@ -170,7 +171,8 @@ export default function Histroy() {
                                                 {selectedEntry.musicRecs.map((track) => (
                                                     <div className={dashStyles.songItem} key={track.id}>
                                                         {track.image && track.image.length > 0 && (
-                                                            <img className={dashStyles.songImg} src={track.image} alt={track.name} width={50} height={50} />
+                                                            <Image className={dashStyles.songImg} src={track.image} alt={track.name} width={50} height={50} />
+
                                                         )}
                                                         <div className={dashStyles.songDetails}>
                                                             <a

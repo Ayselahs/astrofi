@@ -86,7 +86,8 @@ export default function LikedPage({ likedTracks }) {
                                 tracks.map((track) => (
                                     <div className={historyStyles.entry}>
                                         {track.image && (
-                                            <img className={historyStyles.icon} src={track.image} alt={track.name} width={50} height={50} />
+                                            <Image className={historyStyles.icon} src={track.image} alt={track.name} width={50} height={50} />
+
                                         )}
 
                                         <div className={historyStyles.text} key={track.id}>
@@ -102,7 +103,8 @@ export default function LikedPage({ likedTracks }) {
 
                                         </div>
                                         <button className={historyStyles.deleteBtn} onClick={() => handleDeleteTrack(track.id)}>
-                                            <img src="/delete.png" alt="Menu" />
+                                            <Image src="/delete.png" alt="Menu" />
+
                                         </button>
                                     </div>
                                 ))
