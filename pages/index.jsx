@@ -57,12 +57,11 @@ export default function Index(props) {
                 <Link href="/login" >Login</Link>
               </div>
 
-              <img
-                loading="lazy"
+              <Image loading="lazy"
                 src="/Logo.png"
                 className={Home.logo}
-                alt="logo"
-              />
+                alt="logo" />
+
               <div className={Home.signupBtn}>
                 <Link href="/signup" >Sign Up</Link>
               </div>
