@@ -250,7 +250,7 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
               {artists.map((artist) => (
                 <div key={artist.id} className={dashStyles.artistItem}>
                   {artist.images && artist.images.length > 0 && (
-                    <Image className={dashStyles.artistImg} src={artist.images[0].url} alt={artist.name} width={50} height={50} />
+                    <Image className={dashStyles.artistImg} src={artist.images[0].url} alt={artist.name} width={172} height={172} />
 
                   )}
                   <a
@@ -272,7 +272,7 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
                 recommendations.map((track) => (
                   <div className={dashStyles.songItem} key={track.id}>
                     {track.album.images && track.album.images.length > 0 && (
-                      <Image className={dashStyles.songImg} src={track.album.images[0].url} alt={track.name} width={50} height={50} />
+                      <Image className={dashStyles.songImg} src={track.album.images[0].url} alt={track.name} width={300} height={300} />
                     )}
 
                     <div className={dashStyles.songDetails}>
@@ -286,11 +286,11 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
                       </a>
                       {tracks.some((t) => t.id === track.id) ? (
                         <button className={dashStyles.likeBtn} onClick={() => handleUnlike(track.id)}>
-                          <Image src="/heart.png" alt="unlike" width={50} height={50} />
+                          <Image src="/heart.png" alt="unlike" width={29} height={29} />
                         </button>
                       ) : (
                         <button className={dashStyles.likeBtn} onClick={() => handleLike(track)}>
-                          <Image src="/Heart-2.png" alt="like" width={50} height={50} />
+                          <Image src="/Heart-2.png" alt="like" width={29} height={29} />
 
                         </button>
                       )}

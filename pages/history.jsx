@@ -8,7 +8,7 @@ import dashStyles from "../styles/Dashboard.module.css"
 import Image from "next/image";
 
 
-export default function Histroy() {
+export default function Histroy({ userName }) {
     const [historyEntry, setHistoryEntry] = useState([])
     const [selectedEntry, setSelectedEntry] = useState(null)
     const [likedTracks, setLikedTracks] = useState()
@@ -17,7 +17,7 @@ export default function Histroy() {
         async function fetchHistoryEntries() {
             try {
                 console.log("In here")
-                const response = await fetch('/api/historyEntry')
+                const response = await fetch(`/api/historyEntry?userName=${userName}`)
                 const data = await response.json()
                 console.log("Data", data)
                 setHistoryEntry(data)
@@ -148,8 +148,8 @@ export default function Histroy() {
                                     <div className={dashStyles.artistList}>
                                         {selectedEntry.artistRecs.map((artist) => (
                                             <div key={artist.id} className={dashStyles.artistItem}>
-                                                {artist.images[0].url && artist.images[0].url.length > 0 && (
-                                                    <Image className={dashStyles.artistImg} src={artist.images[0].url} alt={artist.name} width={50} height={50} />
+                                                {artist.images && artist.images.length > 0 && artist.images[0].url && (
+                                                    <Image className={dashStyles.artistImg} src={artist.images[0].url} alt={artist.name} width={172} height={172} />
 
                                                 )}
                                                 <a
@@ -172,7 +172,7 @@ export default function Histroy() {
                                                 {selectedEntry.musicRecs.map((track) => (
                                                     <div className={dashStyles.songItem} key={track.id}>
                                                         {track.image && track.image.length > 0 && (
-                                                            <Image className={dashStyles.songImg} src={track.image} alt={track.name} width={50} height={50} />
+                                                            <Image className={dashStyles.songImg} src={track.image} alt={track.name} width={300} height={300} />
 
                                                         )}
                                                         <div className={dashStyles.songDetails}>

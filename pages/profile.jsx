@@ -99,7 +99,7 @@ export default function Profile({ user, ...props }) {
                         <Image loading="lazy"
                             src="/Mask group.png"
                             className={profileStyles.avatar}
-                            alt="avatar" width={50} height={50} />
+                            alt="avatar" width={288} height={288} />
 
                         <div className={profileStyles.info}>
                             <h1 className={profileStyles.userName}>{userData.username}</h1>
