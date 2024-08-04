@@ -172,10 +172,7 @@
 }
 
 @media (max-width: 991px) {
-    .container {
-        max-width: 100%;
-        padding: 0 20px;
-    }
+
 
     .form {
         margin-top: 40px;
@@ -187,29 +184,16 @@
         font-size: 40px;
     }
 
-    .passLabel {
-        max-width: 100%;
-        margin-top: 260px;
-    }
 
-    .userLabel {
-        max-width: 100%;
-        margin-top: 120px;
-    }
 
-    .divider {
-        margin: 40px 10px 0 0;
-    }
 
     .loginBtn {
         font-size: 40px;
-        margin-top: 40px;
+        margin-top: 20px;
         white-space: initial;
         padding: 0 20px;
 
     }
 
-    .text {
-        margin-top: 40px;
-    }
+
 }

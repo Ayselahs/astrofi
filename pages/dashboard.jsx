@@ -357,11 +357,11 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
                       </a>
                       {tracks.some((t) => t.id === track.id) ? (
                         <button className={dashStyles.likeBtn} onClick={() => handleUnlike(track.id)}>
-                          <img src="/bookmark_filled.png" alt="Menu" className="" />
+                          <img src="/heart.png" alt="Menu" className="" />
                         </button>
                       ) : (
                         <button className={dashStyles.likeBtn} onClick={() => handleLike(track)}>
-                          <img src="/bookmark_filled.png" alt="Menu" className="" />
+                          <img src="/Heart-2.png" alt="Menu" className="" />
                         </button>
                       )}
                     </div>

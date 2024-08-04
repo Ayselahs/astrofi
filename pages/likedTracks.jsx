@@ -101,7 +101,9 @@ export default function LikedPage({ likedTracks }) {
                                             <div className={historyStyles.descrip}>{track.artist}</div>
 
                                         </div>
-                                        <button lassName={historyStyles.deletebtn} onClick={() => handleDeleteTrack(track.id)}>Delete</button>
+                                        <button className={historyStyles.deleteBtn} onClick={() => handleDeleteTrack(track.id)}>
+                                            <img src="/delete.png" alt="Menu" />
+                                        </button>
                                     </div>
                                 ))
                             ) : (

@@ -8,10 +8,9 @@ import dashStyles from "../styles/Dashboard.module.css"
 
 
 export default function Histroy() {
-    454
     const [historyEntry, setHistoryEntry] = useState([])
     const [selectedEntry, setSelectedEntry] = useState(null)
-    const [likedTracks, setLikedTracks] = useState([])
+    const [likedTracks, setLikedTracks] = useState()
 
     useEffect(() => {
         async function fetchHistoryEntries() {
@@ -28,22 +27,6 @@ export default function Histroy() {
 
         }
 
-        const fetchLikedTracks = async () => {
-            try {
-                const response = await fetch('/api/likeTrack')
-                if (!response.ok) {
-                    throw new Error('Failed to like')
-                }
-
-                const result = await response.json()
-                setLikedTracks(result.likedTracks)
-                console.log('Track liked', result)
-            } catch (err) {
-                console.error('Error liking track', err)
-            }
-        }
-        fetchLikedTracks()
-
         fetchHistoryEntries()
     }, [])
 
@@ -57,6 +40,7 @@ export default function Histroy() {
     }
 
     const handleLike = async (track) => {
+
         try {
             const response = await fetch('/api/likeTrack', {
                 method: 'POST',
@@ -70,7 +54,7 @@ export default function Histroy() {
             }
 
             const result = await response.json()
-            setLikedTracks((prev) => [...prev, track])
+            setLikedTracks((prev) => [...prev, likedTrack])
             console.log('Track liked', result)
         } catch (err) {
             console.error('Error liking track', err)
@@ -189,19 +173,16 @@ export default function Histroy() {
                                                             <img className={dashStyles.songImg} src={track.image} alt={track.name} width={50} height={50} />
                                                         )}
                                                         <div className={dashStyles.songDetails}>
-                                                            <button className={dashStyles.likeBtn} onClick={() => handleLike(track)}>
-                                                                <img src="/bookmark_filled.png" alt="Menu" className="" />
-                                                            </button>
-                                                            <div>
-                                                                <a
-                                                                    href={track.url}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                >
-                                                                    <div className={dashStyles.songTitle}>{track.name}</div>
-                                                                    <div className={dashStyles.songArtist}>by {track.artist}</div>
-                                                                </a>
-                                                            </div>
+                                                            <a
+                                                                href={track.url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <div className={dashStyles.songTitle}>{track.name}</div>
+                                                                <div className={dashStyles.songArtist}>by {track.artist}</div>
+                                                            </a>
+
+
                                                         </div>
 
 

@@ -206,8 +206,15 @@
 
 @media (max-width: 991px) {
 
+    .layout {
+        flex-direction: column;
+        overflow: auto;
+    }
+
     .dashboard {
-        margin: 0
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
     }
 
     .horoscope {
@@ -216,14 +223,18 @@
     }
 
     .horoText {
-        max-width: 100%;
+        font-size: 24px;
+        margin-top: 20px;
     }
 
     .horoDetails {
-        max-width: 100%;
         flex-wrap: wrap;
-        padding-right: 20px;
-        margin-top: 40px;
+        padding: 0;
+        gap: 10px
+    }
+
+    .horoItem {
+        width: 100%;
     }
 
     /*Artist*/
