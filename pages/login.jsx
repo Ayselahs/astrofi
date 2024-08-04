@@ -57,7 +57,8 @@ export default function Login(props) {
         <Image loading="lazy"
           src="/noisy-gradients.png"
           className={loginStyles.bgImg}
-          alt="" />
+          alt="" width={100}
+          height={100} />
 
         <div className={loginStyles.container}>
           <h1 className={loginStyles.title}>Log In</h1>

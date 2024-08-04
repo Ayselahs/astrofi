@@ -42,13 +42,17 @@ export default function Index(props) {
         <Image loading="lazy"
           src="/Bg-1.png"
           className={Home.bgImg}
-          alt="Background" />
+          alt="Background"
+          width={100}
+          height={100} />
 
         <div className={Home.wrappeer}>
           <Image loading="lazy"
             src="/Bg-2.png"
             className={Home.bgImg}
-            alt="Overlay" />
+            alt="Overlay"
+            width={100}
+            height={100} />
 
           <header className={Home.header}>
             <nav className={Home.nav}>
@@ -60,7 +64,9 @@ export default function Index(props) {
               <Image loading="lazy"
                 src="/Logo.png"
                 className={Home.logo}
-                alt="logo" />
+                alt="logo"
+                width={100}
+                height={100} />
 
               <div className={Home.signupBtn}>
                 <Link href="/signup" >Sign Up</Link>

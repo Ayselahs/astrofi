@@ -8,9 +8,9 @@ import Link from "next/link";
 import styles from "../styles/Home.module.css";
 import profileStyles from "../styles/Profile.module.css"
 import { fetchQuoteData } from '@/utils/fetchBackUpHoro';
-import Sidebar from '@/components/header/Sidebar';
+import Sidebar from '@/components/Sidebar';
 import useLogout from '@/hooks/useLogout';
-import { Image } from "next/image";
+import Image from "next/image";
 
 
 export const getServerSideProps = withIronSessionSsr(
@@ -99,7 +99,7 @@ export default function Profile({ user, ...props }) {
                         <Image loading="lazy"
                             src="/Mask group.png"
                             className={profileStyles.avatar}
-                            alt="avatar" />
+                            alt="avatar" width={50} height={50} />
 
                         <div className={profileStyles.info}>
                             <h1 className={profileStyles.userName}>{userData.username}</h1>

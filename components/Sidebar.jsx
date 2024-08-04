@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import sidebar from "../../styles/Sidebar.module.css"
-import { Image } from "next/image";
+import sidebar from "@/styles/Sidebar.module.css"
+import Image from "next/image";
 
-export default function Sidebar() {
+const Sidebar = () => {
 
     const [menuOpen, setMenuOpen] = useState(false)
     const toggleMenu = () => {
@@ -15,10 +15,12 @@ export default function Sidebar() {
             <div className={sidebar.header}>
                 <Image src='/Logo 1.png'
                     alt=''
-                    className={sidebar.logo} />
+                    className={sidebar.logo} width={100}
+                    height={100} />
 
                 <button className={sidebar.hamburger} onClick={toggleMenu}>
-                    <Image src="/container.png" alt="Menu" className={sidebar.hamburgerIcon} />
+                    <Image src="/container.png" alt="Menu" className={sidebar.hamburgerIcon} width={100}
+                        height={100} />
 
                 </button>
             </div>
@@ -38,4 +40,6 @@ export default function Sidebar() {
 
     )
 }
+
+export default Sidebar;
 

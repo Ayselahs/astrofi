@@ -54,7 +54,9 @@ export default function Signup(props) {
         <Image loading="lazy"
           src="/noisy-gradients.png"
           className={signupStyles.bgImg}
-          alt="" />
+          alt=""
+          width={100}
+          height={100} />
 
         <div className={signupStyles.container}>
           <h1 className={signupStyles.title}>Sign Up</h1>
