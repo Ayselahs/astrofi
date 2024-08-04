@@ -8,7 +8,6 @@ import { useRouter } from "next/router";
 import { withIronSessionSsr } from "iron-session/next";
 import sessionOptions from "../config/session";
 import Header from "../components/header";
-import { Image } from "next/image";
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {

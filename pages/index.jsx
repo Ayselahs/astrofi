@@ -9,7 +9,6 @@ import Home from "../styles/Home.module.css"
 import Header from "../components/header";
 import useLogout from "../hooks/useLogout";
 import dbConnect from "@/db/connection";
-import { Image } from "next/image";
 
 
 

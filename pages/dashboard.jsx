@@ -26,7 +26,6 @@ import SpotifyWebPlayer from "react-spotify-web-playback";
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/header/Sidebar";
 import dashStyles from "../styles/Dashboard.module.css"
-import { Image } from "next/image";
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {

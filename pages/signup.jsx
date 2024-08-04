@@ -5,7 +5,6 @@ import { useState } from "react";
 import styles from "../styles/Footer.module.css";
 import signupStyles from "../styles/Signup.module.css"
 import { useRouter } from "next/router"
-import { Image } from "next/image";
 
 export default function Signup(props) {
   const router = useRouter();

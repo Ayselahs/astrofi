@@ -8,7 +8,6 @@ import Link from "next/link";
 import styles from "../styles/Footer.module.css";
 import historyStyles from "../styles/History.module.css"
 import Sidebar from "@/components/header/Sidebar";
-import { Image } from "next/image";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req }) {
@@ -87,7 +86,7 @@ export default function LikedPage({ likedTracks }) {
                                 tracks.map((track) => (
                                     <div className={historyStyles.entry}>
                                         {track.image && (
-                                            <Image className={historyStyles.icon} src={track.image} alt={track.name} width={50} height={50} />
+                                            <Image className={historyStyles.icon} key={track.image} src={track.image} alt={track.name} width={50} height={50} />
 
                                         )}
 
