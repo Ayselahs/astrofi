@@ -10,6 +10,7 @@ import profileStyles from "../styles/Profile.module.css"
 import { fetchQuoteData } from '@/utils/fetchBackUpHoro';
 import Sidebar from '@/components/header/Sidebar';
 import useLogout from '@/hooks/useLogout';
+import { Image } from "next/image";
 
 
 export const getServerSideProps = withIronSessionSsr(

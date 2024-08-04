@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import styles from "../styles/Footer.module.css";
 import signupStyles from "../styles/Signup.module.css"
-import { useRouter } from "next/router";
+import { useRouter } from "next/router"
+import { Image } from "next/image";
 
 export default function Signup(props) {
   const router = useRouter();
@@ -55,12 +56,7 @@ export default function Signup(props) {
           src="/noisy-gradients.png"
           className={signupStyles.bgImg}
           alt="" />
-        <img
-          loading="lazy"
-          src="/noisy-gradients.png"
-          className={signupStyles.bgImg}
-          alt=""
-        />
+
         <div className={signupStyles.container}>
           <h1 className={signupStyles.title}>Sign Up</h1>
 

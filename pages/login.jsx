@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { withIronSessionSsr } from "iron-session/next";
 import sessionOptions from "../config/session";
 import Header from "../components/header";
+import { Image } from "next/image";
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
@@ -58,12 +59,7 @@ export default function Login(props) {
           src="/noisy-gradients.png"
           className={loginStyles.bgImg}
           alt="" />
-        <img
-          loading="lazy"
-          src="/noisy-gradients.png"
-          className={loginStyles.bgImg}
-          alt=""
-        />
+
         <div className={loginStyles.container}>
           <h1 className={loginStyles.title}>Log In</h1>
 

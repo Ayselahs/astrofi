@@ -5,6 +5,7 @@ import styles from "../styles/Footer.module.css";
 import historyStyles from "../styles/History.module.css"
 import Sidebar from "@/components/header/Sidebar";
 import dashStyles from "../styles/Dashboard.module.css"
+import { Image } from "next/image";
 
 
 export default function Histroy() {

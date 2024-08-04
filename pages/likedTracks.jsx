@@ -8,6 +8,7 @@ import Link from "next/link";
 import styles from "../styles/Footer.module.css";
 import historyStyles from "../styles/History.module.css"
 import Sidebar from "@/components/header/Sidebar";
+import { Image } from "next/image";
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req }) {

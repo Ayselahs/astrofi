@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import sidebar from "../../styles/Sidebar.module.css"
+import { Image } from "next/image";
 
 export default function Sidebar() {
 
