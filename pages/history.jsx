@@ -8,7 +8,7 @@ import dashStyles from "../styles/Dashboard.module.css"
 import Image from "next/image";
 
 
-export default function Histroy({ userName }) {
+export default function Histroy({ username }) {
     const [historyEntry, setHistoryEntry] = useState([])
     const [selectedEntry, setSelectedEntry] = useState(null)
     const [likedTracks, setLikedTracks] = useState()
@@ -17,7 +17,7 @@ export default function Histroy({ userName }) {
         async function fetchHistoryEntries() {
             try {
                 console.log("In here")
-                const response = await fetch(`/api/historyEntry?userName=${userName}`)
+                const response = await fetch(`/api/historyEntry?username=${username}`)
                 const data = await response.json()
                 console.log("Data", data)
                 setHistoryEntry(data)
@@ -29,7 +29,7 @@ export default function Histroy({ userName }) {
         }
 
         fetchHistoryEntries()
-    }, [])
+    }, [username])
 
 
     const openModal = (entry) => {
