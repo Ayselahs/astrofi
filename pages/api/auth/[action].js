@@ -29,7 +29,7 @@ async function login(req, res) {
     } = await db.auth.login(username, password, zodiac)
     req.session.user = otherFields
     await req.session.save()
-    res.status(200).end()
+    res.status(200).json(req.session)
   } catch (err) {
     res.status(400).json({ error: err.message })
   }
@@ -47,7 +47,7 @@ async function signup(req, res) {
     } = await db.user.create(username, password, zodiac)
     req.session.user = otherFields
     await req.session.save()
-    res.redirect('/dashboard')
+    res.status(200).json(req.session)
   } catch (err) {
     res.status(400).json({ error: err.message })
   }

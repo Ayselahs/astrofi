@@ -6,30 +6,92 @@ import historyStyles from "../styles/History.module.css"
 import Sidebar from "@/components/Sidebar";
 import dashStyles from "../styles/Dashboard.module.css"
 import Image from "next/image";
+import User from '@/db/models/user'
+import sessionOptions from "../config/session";
+import { withIronSessionSsr } from "iron-session/next";
+import dbConnect from "@/db/connection";
+import { useUserContext } from "@/context";
+import { FETCH_HISTORY } from "@/context/actions";
+import HistoryEntry from "@/db/models/historyEntry";
 
 
-export default function Histroy({ username }) {
-    const [historyEntry, setHistoryEntry] = useState([])
-    const [selectedEntry, setSelectedEntry] = useState(null)
-    const [likedTracks, setLikedTracks] = useState()
+export const getServerSideProps = withIronSessionSsr(
+    async function getServerSideProps({ req }) {
+        const userName = req.session.user
+        console.log("username", userName)
+        const props = {};
+        await dbConnect()
+        if (userName) {
 
-    useEffect(() => {
-        async function fetchHistoryEntries() {
             try {
-                console.log("In here")
-                const response = await fetch(`/api/historyEntry?username=${username}`)
-                const data = await response.json()
-                console.log("Data", data)
-                setHistoryEntry(data)
-                console.log("Data", data)
-            } catch (err) {
-                console.error('Error fetching entires', err)
-            }
+                const dbUser = await User.findById(userName._id).lean()
+                console.log('Username:', dbUser)
+                if (!dbUser) {
+                    return {
+                        redirect: {
+                            destination: '/login',
+                            permanent: false
+                        }
+                    }
+                }
 
+
+                const historyEntries = await fetchHistoryEntries(dbUser)
+                props.historyEntries = historyEntries
+                props.userId = dbUser.toString()
+
+                return {
+                    props
+                }
+            } catch (err) {
+                console.error('Error fetching:', err)
+                props.historyEntries = []
+                return { props }
+
+            }
+        } else {
+            return {
+                redirect: {
+                    destination: '/login',
+                    permanent: false
+                }
+            }
         }
 
-        fetchHistoryEntries()
-    }, [username])
+
+    }, sessionOptions
+
+
+)
+
+async function fetchHistoryEntries(userId) {
+    try {
+        if (!userId) {
+            console.error("Username is undefined")
+            return;
+        }
+        const entries = await HistoryEntry.find({ userId }).lean()
+        return JSON.parse(JSON.stringify(entries))
+    } catch (err) {
+        console.error('Error fetch entires', err)
+        return []
+    }
+}
+
+
+export default function Histroy({ userId, historyEntries }) {
+    const { state, dispatch } = useUserContext()
+    const [selectedEntry, setSelectedEntry] = useState(null)
+    const [likedTracks, setLikedTracks] = useState([])
+
+    useEffect(() => {
+
+
+
+        if (userId && historyEntries) {
+            dispatch({ type: FETCH_HISTORY, payload: historyEntries })
+        }
+    }, [userId, historyEntries, dispatch])
 
 
     const openModal = (entry) => {
@@ -93,8 +155,8 @@ export default function Histroy({ username }) {
                         <section className={historyStyles.history}>
 
                             <div className={historyStyles.item}>
-                                {historyEntry.length > 0 ? (
-                                    historyEntry.map((entry) => (
+                                {historyEntries.length > 0 ? (
+                                    historyEntries.map((entry) => (
                                         <div key={entry.id} className={historyStyles.entry} onClick={() => openModal(entry)}>
                                             <div className={historyStyles.icon} />
                                             <div className={historyStyles.text} >
@@ -211,7 +273,7 @@ export default function Histroy({ username }) {
         </>
         /*
         <main>
-
+ 
             <div>
                 <Link href="/dashboard" className={styles.card}>
                     <h2>Back to Dashboard &rarr;</h2>
@@ -228,11 +290,11 @@ export default function Histroy({ username }) {
                     ) : (
                         <p>No history entries found</p>
                     )}
-
+ 
                 </ul>
-
+ 
                 {selectedEntry && (
-
+ 
                     <ReactModal
                         isOpen={!!selectedEntry}
                         onRequestClose={closeModal}
@@ -263,7 +325,7 @@ export default function Histroy({ username }) {
                                         >
                                             {artist.name}
                                         </a>
-
+ 
                                     </li>
                                 ))}
                             </ul>
@@ -285,7 +347,7 @@ export default function Histroy({ username }) {
                                         {track.image && (
                                             <img src={track.image} alt={track.name} width={50} height={50} />
                                         )}
-
+ 
                                     </li>
                                 ))}
                             </ul>

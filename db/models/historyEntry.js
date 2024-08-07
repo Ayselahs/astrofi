@@ -6,6 +6,10 @@ const HistoryEntrySchema = new Schema({
         ref: 'User',
         required: true
     },
+    username: {
+        type: Schema.Types.String,
+        ref: 'User',
+    },
     horoscope: {
         prediction: {
             type: String,

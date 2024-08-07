@@ -1,10 +1,12 @@
 .bgImg {
-    position: absolute;
-    inset: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
     height: 100%;
     width: 100%;
     object-fit: cover;
     object-position: center;
+    z-index: -1;
 }
 
 .container {
@@ -16,6 +18,7 @@
 }
 
 .wrapper {
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -77,6 +80,7 @@
     background-color: rgba(217, 217, 217, 1);
     padding: 10px 20px;
     margin-top: 10px;
+    cursor: pointer;
 }
 
 .info {

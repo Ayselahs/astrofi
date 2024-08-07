@@ -11,11 +11,14 @@ import { fetchQuoteData } from '@/utils/fetchBackUpHoro';
 import Sidebar from '@/components/Sidebar';
 import useLogout from '@/hooks/useLogout';
 import Image from "next/image";
+import { useUserContext } from '@/context';
+import { UPDATE_USER } from '@/context/actions';
 
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req }) {
-        const userName = req.session.username
+        const userName = req.session.user
+        console.log("username", userName)
         const props = {}
 
 
@@ -23,13 +26,8 @@ export const getServerSideProps = withIronSessionSsr(
         await dbConnect()
 
         try {
-            const user = await User.findOne({ userName }).exec()
-
-            const horoscopeData = await fetchQuoteData()
-
-            const quote = {
-                dailyQuote: horoscopeData.daily
-            }
+            const user = await User.findById(userName._id).lean()
+            console.log('Username:', user)
 
             if (!user) {
                 return {
@@ -40,6 +38,12 @@ export const getServerSideProps = withIronSessionSsr(
                 }
             }
 
+            const horoscopeData = await fetchQuoteData()
+
+            const quote = {
+                dailyQuote: horoscopeData.daily
+            }
+
             return {
                 props: {
                     user: JSON.parse(JSON.stringify(user)),
@@ -48,7 +52,13 @@ export const getServerSideProps = withIronSessionSsr(
             }
         } catch (err) {
             console.error("Error updating zodiac", err)
-            props.quote = []
+            return {
+                props: {
+                    user: null,
+                    quote: [],
+                }
+            }
+
         }
 
 
@@ -57,11 +67,18 @@ export const getServerSideProps = withIronSessionSsr(
     }, sessionOptions
 )
 
-export default function Profile({ user, ...props }) {
+export default function Profile({ user, quote }) {
     const logout = useLogout()
+    const { state, dispatch } = useUserContext()
     const [userData, setUserData] = useState(user)
     const [zodiac, setZodiac] = useState(user.zodiac)
     const [isEditing, setIsEditing] = useState(false)
+
+    useEffect(() => {
+        if (user) {
+            dispatch({ type: UPDATE_USER, payload: user })
+        }
+    }, [user, dispatch])
 
     const handleUpdateZodiac = async () => {
         setIsEditing(true)
@@ -75,6 +92,7 @@ export default function Profile({ user, ...props }) {
             })
             setUserData(response.data)
             console.log("Zodiac updated")
+            dispatch({ type: UPDATE_USER, payload: response.data })
 
             setIsEditing(false)
         } catch (err) {
@@ -93,7 +111,7 @@ export default function Profile({ user, ...props }) {
                     <div className={profileStyles.divider} />
                     <header className={profileStyles.header}>
                         <div className={profileStyles.logoutBtn} onClick={logout}>Logout</div>
-                        <blockquote className={profileStyles.quote}>{props.quote.dailyQuote}</blockquote>
+                        <blockquote className={profileStyles.quote}>{quote.dailyQuote}</blockquote>
                     </header>
                     <section className={profileStyles.user}>
                         <Image loading="lazy"

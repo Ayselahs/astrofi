@@ -142,6 +142,7 @@
     text-align: center;
     padding: 5px 60px;
     font: 38px Magiesta, sans-serif;
+    cursor: pointer;
 }
 
 .text {

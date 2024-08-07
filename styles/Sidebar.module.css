@@ -49,6 +49,7 @@
     margin-top: 28px;
     text-align: center;
     display: block;
+    cursor: pointer;
 }
 
 .item.active {

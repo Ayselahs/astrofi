@@ -8,6 +8,8 @@ import { useRouter } from "next/router";
 import { withIronSessionSsr } from "iron-session/next";
 import sessionOptions from "../config/session";
 import Header from "../components/header";
+import { useUserContext } from "@/context";
+import { LOGIN_USER } from "@/context/actions";
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
@@ -26,6 +28,7 @@ export const getServerSideProps = withIronSessionSsr(
 
 export default function Login(props) {
   const router = useRouter();
+  const { dispatch } = useUserContext()
   const [{ username, password }, setForm] = useState({
     username: "",
     password: "",
@@ -44,10 +47,19 @@ export default function Login(props) {
         },
         body: JSON.stringify({ username, password }),
       });
-      if (res.status === 200) return router.push("/dashboard");
+
+
+      if (res.status === 200) {
+        console.log("Went here")
+        const user = await res.json()
+        dispatch({ type: LOGIN_USER, payload: user })
+        return router.push("/dashboard");
+      }
+
       const { error: message } = await res.json();
       setError(message);
     } catch (err) {
+      alert('Login failed')
       console.log(err);
     }
   }

@@ -26,6 +26,9 @@ import SpotifyWebPlayer from "react-spotify-web-playback";
 import { useEffect, useState } from "react";
 import Sidebar from '@/components/Sidebar'
 import dashStyles from "../styles/Dashboard.module.css"
+import horoscope from "@/db/models/horoscope";
+import { useUserContext } from "@/context";
+import { FETCH_ARTIST_DATA, FETCH_HOROSCOPE, FETCH_SONG_DATA } from "@/context/actions";
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req }) {
@@ -49,16 +52,7 @@ export const getServerSideProps = withIronSessionSsr(
         //const predictionData = await fetchHoroscope(zodiac)
         const signData = await fetchSignData(zodiac)
         //console.log("Horoscope Data", horoscopeData)
-        props.horoscope = {
-          zodiac,
-          prediction: horoscopeData.horoscope || 'No prediction',
-          //color: predictionData.color || '',
-          number: horoscopeData.lucky_number || '',
-          compatibility: signData.compatibility || '',
-          date: signData.date_range || '',
-          element: signData.element || ''
 
-        }
         //console.log("Horoscope Props", props.horoscope)
 
         const keywords = extractWords(horoscopeData.horoscope)
@@ -77,11 +71,11 @@ export const getServerSideProps = withIronSessionSsr(
         console.log("Random Genres", randomizedGenres)*/
 
         const spotifyAccessToken = await fetchToken()
-        console.log("Token", spotifyAccessToken)
+        //console.log("Token", spotifyAccessToken)
         req.session.spotifyAccessToken = spotifyAccessToken
         await req.session.save()
 
-        props.spotifyAccessToken = spotifyAccessToken
+        //props.spotifyAccessToken = spotifyAccessToken
 
 
         const spotifyData = await fetchSpotify(mappedGenres)
@@ -90,8 +84,8 @@ export const getServerSideProps = withIronSessionSsr(
 
         //console.log("Spotify Data", spotifyData)
         //console.log("Artist Data", artistData)
-        props.spotifyData = spotifyData || []
-        props.artistData = artistData || []
+        //props.spotifyData = spotifyData || []
+        //props.artistData = artistData || []
         //console.log("Spotify Props", props.spotifyData)
 
         const today = new Date()
@@ -108,7 +102,16 @@ export const getServerSideProps = withIronSessionSsr(
         if (!existingEntry) {
           const createEntry = new HistoryEntry({
             userId: dbUser._id,
-            horoscope: props.horoscope,
+            horoscope: {
+              zodiac,
+              prediction: horoscopeData.horoscope || 'No prediction',
+              //color: predictionData.color || '',
+              number: horoscopeData.lucky_number || '',
+              compatibility: signData.compatibility || '',
+              date: signData.date_range || '',
+              element: signData.element || ''
+
+            },
             musicRecs: spotifyData.map(track => ({
               id: track.id,
               name: track.name,
@@ -128,32 +131,50 @@ export const getServerSideProps = withIronSessionSsr(
           await createEntry.save()
         }
 
+        return {
+          props: {
+            horoscope: {
+              zodiac,
+              prediction: horoscopeData.horoscope || 'No prediction',
+              //color: predictionData.color || '',
+              number: horoscopeData.lucky_number || '',
+              compatibility: signData.compatibility || '',
+              date: signData.date_range || '',
+              element: signData.element || ''
+
+            },
+            spotifyData: spotifyData || [],
+            artistData: artistData || [],
+            spotifyAccessToken
+          }
+        };
+
       } catch (err) {
         console.error('Error fetching:', err)
-        props.horoscope = { horoscope: 'Error fetching horoscope' }
-        props.spotifyData = []
-        props.artistData = []
+        return {
+          props: {
+            user: null,
+            horoscope: null,
+            spotifyData: [],
+            artistData: [],
+          }
+        }
+
       }
 
 
-    } else {
-      props.isLoggedIn = false;
-      props.horoscope = { prediction: 'No horoscope' }
-      props.spotifyData = []
-      props.artistData = []
     }
-    return {
-      props
-    };
+
   },
   sessionOptions
 );
 
-export default function Dashboard({ spotifyAccessToken, ...props }) {
+export default function Dashboard({ user, horoscope, spotifyData, artistData, spotifyAccessToken }) {
   const router = useRouter();
   const logout = useLogout();
-  const [recommendations, setRecommendations] = useState(props.spotifyData)
-  const [artists, setArtists] = useState(props.artistData)
+  const { state, dispatch } = useUserContext()
+  const [recommendations, setRecommendations] = useState(spotifyData)
+  const [artists, setArtists] = useState(artistData)
   const [player, setPlayer] = useState(null)
   const [isInitialized, setIsInitialized] = useState(false)
   const [trackProgress, setTrackProgress] = useState(0)
@@ -163,6 +184,14 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
   //console.log("Artist", artists)
   //console.log("Recommendations", recommendations)
   //console.log("Spotify Access:", spotifyAccessToken)
+
+  useEffect(() => {
+    if (user) {
+      dispatch({ type: FETCH_HOROSCOPE, payload: horoscope })
+      dispatch({ type: FETCH_SONG_DATA, payload: spotifyData })
+      dispatch({ type: FETCH_ARTIST_DATA, payload: artistData })
+    }
+  }, [user, horoscope, spotifyData, artistData, dispatch])
 
 
 
@@ -227,20 +256,20 @@ export default function Dashboard({ spotifyAccessToken, ...props }) {
           <h1 className={dashStyles.bigTitle}>Daily Horoscope Recommendations</h1>
           <section className={dashStyles.horoscope}>
             <p className={dashStyles.horoText}>
-              {props.horoscope.prediction}
+              {horoscope.prediction}
             </p>
             <div className={dashStyles.horoDetails}>
               <div className={dashStyles.horoItem}>
                 <h3 className={dashStyles.horoLabel}>Element</h3>
-                <p className={dashStyles.horoValue}>{props.horoscope.element}</p>
+                <p className={dashStyles.horoValue}>{horoscope.element}</p>
               </div>
               <div className={dashStyles.horoItem}>
                 <h3 className={dashStyles.horoLabel}>Compatibility</h3>
-                <p className={dashStyles.horoValue}>{props.horoscope.compatibility}</p>
+                <p className={dashStyles.horoValue}>{horoscope.compatibility}</p>
               </div>
               <div className={dashStyles.horoItem}>
                 <h3 className={dashStyles.horoLabel}>Lucky Number</h3>
-                <p className={dashStyles.horoValue}>{props.horoscope.number}</p>
+                <p className={dashStyles.horoValue}>{horoscope.number}</p>
               </div>
             </div>
           </section>

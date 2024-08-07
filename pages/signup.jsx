@@ -5,9 +5,12 @@ import { useState } from "react";
 import styles from "../styles/Footer.module.css";
 import signupStyles from "../styles/Signup.module.css"
 import { useRouter } from "next/router"
+import { useUserContext } from "@/context";
+import { LOGIN_USER } from "@/context/actions";
 
 export default function Signup(props) {
   const router = useRouter();
+  const { dispatch } = useUserContext()
   const [
     form,
     setForm
@@ -41,9 +44,16 @@ export default function Signup(props) {
         },
         body: JSON.stringify({ username, password, zodiac }),
       });
-      if (res.status === 200) return router.push("/dashboard");
-      const { error: message } = await res.json();
-      setError(message);
+      if (res.status === 200) {
+        const user = await res.json()
+        dispatch({ type: LOGIN_USER, payload: user })
+        return router.push("/dashboard");
+      } else {
+        const { error: message } = await res.json();
+        setError(message);
+      }
+
+
     } catch (err) {
       console.log(err);
     }

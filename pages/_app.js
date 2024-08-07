@@ -1,5 +1,6 @@
 import ReactModal from 'react-modal'
 import '../styles/globals.css'
+import { UserProvider } from '@/context'
 
 if (typeof window !== 'undefined') {
   ReactModal.setAppElement('#__next')
@@ -7,7 +8,11 @@ if (typeof window !== 'undefined') {
 
 function MyApp({ Component, pageProps }) {
 
-  return <Component {...pageProps} />
+  return (
+    <UserProvider>
+      <Component {...pageProps} />
+    </UserProvider>
+  )
 }
 
 export default MyApp

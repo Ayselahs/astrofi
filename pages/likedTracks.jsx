@@ -9,6 +9,8 @@ import styles from "../styles/Footer.module.css";
 import historyStyles from "../styles/History.module.css"
 import Sidebar from "@/components/Sidebar";
 import Image from "next/image";
+import { useUserContext } from '@/context';
+import { FETCH_LOVED_SONGS } from '@/context/actions';
 
 export const getServerSideProps = withIronSessionSsr(
     async function getServerSideProps({ req }) {
@@ -49,7 +51,14 @@ export const getServerSideProps = withIronSessionSsr(
 )
 
 export default function LikedPage({ likedTracks }) {
+    const { state, dispatch } = useUserContext()
     const [tracks, setTracks] = useState(likedTracks)
+
+    useEffect(() => {
+        if (likedTracks) {
+            dispatch({ type: FETCH_LOVED_SONGS, payload: likedTracks })
+        }
+    }, [likedTracks, dispatch])
 
     const handleDeleteTrack = async (trackId) => {
         try {
